@@ -1,5 +1,5 @@
 /**
- *  Child Dimmer Switch
+ *  Child DMX Lights
  *
  *  Copyright 2017 Daniel Ogorchock
  *
@@ -18,11 +18,11 @@
  *    ----        ---            ----
  *    2017-06-10  Dan Ogorchock  Original Creation
  *    2017-08-23  Allan (vseven) Added a generateEvent routine that gets info from the parent device.  This routine runs each time the value is updated which can lead to other modifications of the device.
- *
+ *    2017-09-19  Neil Larmour   Derived a new child device for a DMX-512 Dimmer Circuit
  * 
  */
 metadata {
-	definition (name: "Child Dimmer Switch", namespace: "ogiewon", author: "Dan Ogorchock") {
+	definition (name: "Child DMX Lights", namespace: "BlueFinBima", author: "Neil Larmour") {
 		capability "Switch Level"
         capability "Switch"
 		capability "Relay Switch"
