@@ -23,7 +23,7 @@
  *    2017-06-10  Dan Ogorchock  Added Dimmer Switch support
  *    2017-07-09  Dan Ogorchock  Added number of defined buttons tile
  *    2017-08-24  Allan (vseven) Change the way values are pushed to child devices to allow a event to be executed allowing future customization
- *
+ *    2017-09-19  Neil Larmour   Integrate a new DMX Lighting child device
  */
  
 metadata {
@@ -350,7 +350,7 @@ private void createChildDevice(String deviceName, String deviceNumber) {
          		case "relaySwitch": 
                 	deviceHandlerName = "Child Relay Switch" 
                 	break
-				case "temperature": 
+			case "temperature": 
                 	deviceHandlerName = "Child Temperature Sensor" 
                 	break
          		case "humidity": 
@@ -368,13 +368,13 @@ private void createChildDevice(String deviceName, String deviceNumber) {
          		case "illuminancergb": 
                 	deviceHandlerName = "Child IlluminanceRGB Sensor" 
                 	break
-				case "voltage": 
+			case "voltage": 
                 	deviceHandlerName = "Child Voltage Sensor" 
                 	break
-				case "smoke": 
+			case "smoke": 
                 	deviceHandlerName = "Child Smoke Detector" 
                 	break    
-				case "carbonMonoxide": 
+			case "carbonMonoxide": 
                 	deviceHandlerName = "Child Carbon Monoxide Detector" 
                 	break    
          		case "alarm": 
@@ -383,7 +383,9 @@ private void createChildDevice(String deviceName, String deviceNumber) {
          		case "doorControl": 
                 	deviceHandlerName = "Child Door Control" 
                 	break
-				default: 
+			case "dmxLights":
+			deviceHandlerName = "Child DMX Lights"
+			default: 
                 	log.error "No Child Device Handler case for ${deviceName}"
       		}
             if (deviceHandlerName != "") {
