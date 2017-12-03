@@ -45,11 +45,11 @@ namespace st
 			virtual void refresh();
 
 			//called periodically by Everything class to allow WS2812 animations to happen
-            virtual void animate();
+            		virtual void animate();
 		
 			//gets
 			const String getName() const;
-            const byte getMode();
+            		const byte getMode();
 				
 			//debug flag to determine if debug print statements are executed (set value in your sketch)
 			static bool debug;
