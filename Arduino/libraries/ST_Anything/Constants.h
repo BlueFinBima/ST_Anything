@@ -52,6 +52,7 @@
 //#define ENABLE_SERIAL			//If uncommented, will allow you to type in commands via the Arduino Serial Console Window (useful for debugging)
 //#define DISABLE_SMARTTHINGS	//If uncommented, will disable all ST Shield Library calls (e.g. you want to use this library without SmartThings for a different application)
 //#define DISABLE_REFRESH		//If uncommented, will disable periodic refresh of the sensors and executors states to the ST Cloud - improves performance, but may reduce data integrity
+//#define DISABLE_ANIMATE		//If uncommented, will disable periodic animate calls to allow WS2812 animations
 
 #if defined(__AVR_ATmega168__) || defined(__AVR_ATmega328__) || defined(__AVR_ATmega328P__) || defined(ARDUINO_AVR_UNO)
 #define BOARD_UNO
