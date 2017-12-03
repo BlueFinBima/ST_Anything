@@ -43,6 +43,9 @@ namespace st
 			
 			//called periodically by Everything class to ensure ST Cloud is kept consistent with the state of each Device subclass object
 			virtual void refresh();
+            //called periodically by Everything class to allow WS2812 animations to happen
+            virtual void animate();
+            const byte getMode();
 
 			//gets
 			const String getName() const;

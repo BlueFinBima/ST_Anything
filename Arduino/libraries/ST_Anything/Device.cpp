@@ -49,8 +49,16 @@ namespace st
 	{
 		
 	}
+    void Device::animate()
+    {
+
+    }
 	
-	const String Device::getName() const
+	const byte Device::getMode() 
+	{
+
+    }
+    const String Device::getName() const
 	{
 #if defined(ARDUINO_ARCH_ESP32)   
 		return String((const char*)m_pName);  //strcpy_P() causes ESP32 to crash
