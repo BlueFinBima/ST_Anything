@@ -49,6 +49,15 @@ namespace st
 	{
 		
 	}
+    void Device::animate()
+    {
+
+    }
+	
+	const byte Device::getMode() 
+	{
+
+    }
 	
 	const String Device::getName() const
 	{
