@@ -66,16 +66,16 @@ metadata {
     			state "default", label:'Last Updated ${currentValue}', backgroundColor:"#ffffff"
 		}
 		standardTile("rainbow", "device.rainbow", width: 2, height: 2, inactiveLabel: false, canChangeIcon: false) {
-		    state "offrainbow", label:"soft white", action:"rainbow", icon:"st.illuminance.illuminance.dark", backgroundColor:"#D8D8D8"
-		    state "onrainbow", label:"soft white", action:"rainbow", icon:"st.illuminance.illuminance.bright", backgroundColor:"#FFF1E0"
+		    state "offrainbow", label:"rainbow", action:"rainbow", icon:"st.illuminance.illuminance.dark", backgroundColor:"#D8D8D8"
+		    state "onrainbow", label:"rainbow", action:"rainbow", icon:"st.illuminance.illuminance.bright", backgroundColor:"#FFF1E0"
 		}
 		standardTile("chase", "device.chase", width: 2, height: 2, inactiveLabel: false, canChangeIcon: false) {
 		    state "offchase", label:"chase", action:"chase", icon:"st.illuminance.illuminance.dark", backgroundColor:"#D8D8D8"
 		    state "onchase", label:"chase", action:"chase", icon:"st.illuminance.illuminance.bright", backgroundColor:"#FFFFFB"
 		}
 		standardTile("sparkle", "device.sparkle", width: 2, height: 2, inactiveLabel: false, canChangeIcon: false) {
-		    state "offsparkle", label:"warm white", action:"sparkle", icon:"st.illuminance.illuminance.dark", backgroundColor:"#D8D8D8"
-		    state "onsparkle", label:"warm white", action:"sparkle", icon:"st.illuminance.illuminance.bright", backgroundColor:"#FFF4E5"
+		    state "offsparkle", label:"sparkle", action:"sparkle", icon:"st.illuminance.illuminance.dark", backgroundColor:"#D8D8D8"
+		    state "onsparkle", label:"sparkle", action:"sparkle", icon:"st.illuminance.illuminance.bright", backgroundColor:"#FFF4E5"
 		}
 		standardTile("red", "device.red", width: 2, height: 2, inactiveLabel: false, canChangeIcon: false) {
 		    state "offred", label:"red", action:"red", icon:"st.illuminance.illuminance.dark", backgroundColor:"#D8D8D8"
