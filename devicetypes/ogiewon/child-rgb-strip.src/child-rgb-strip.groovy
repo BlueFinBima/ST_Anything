@@ -56,6 +56,9 @@ metadata {
 				attributeState "turningOff", label:'${name}', action:"switch.on", icon:"st.illuminance.illuminance.light", backgroundColor:"#ffffff", nextState:"turningOn"
 			}    
 			tileAttribute ("device.level", key: "SLIDER_CONTROL") {
+        			attributeState "speed", action:"switch speed.setSpeed"
+    			}
+			tileAttribute ("device.level", key: "SLIDER_CONTROL") {
         			attributeState "level", action:"switch level.setLevel"
     			}
 			tileAttribute ("device.color", key: "COLOR_CONTROL") {
@@ -114,7 +117,7 @@ metadata {
 		    state "onwhite", label:"White", action:"white", icon:"st.illuminance.illuminance.bright", backgroundColor:"#FFFFFF"
 		}
 		main(["switch"])
-		details(["switch", "level", "color", "rainbow","chase","sparkle","red","green","blue","white","cyan",
+		details(["switch", "level", "speed", "color", "rainbow","chase","sparkle","red","green","blue","white","cyan",
 			 "magenta","orange","purple","yellow","lastUpdated"])
 	}
 }
@@ -165,7 +168,11 @@ def setLevel(value) {
 	adjustColor(lastColor)
     }
 }
-
+def setSpeed(value) {
+    def speed = Math.min(value as Integer, 10)
+    // log.debug("Speed value: $speed")
+    sendEvent(name: "speed", value: speed)
+}
 def adjustColor(colorInHEX) {
     // Convert the hex color, apply the level after making sure its valid, then send to parent
     //log.debug("colorInHEX passed in: $colorInHEX")
