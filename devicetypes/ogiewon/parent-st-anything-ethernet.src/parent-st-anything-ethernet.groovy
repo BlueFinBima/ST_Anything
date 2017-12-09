@@ -272,6 +272,12 @@ void childSetColorRGB(String dni, value) {
     sendEthernet("${name} ${value}")
 }
 
+void childSetThemeRGBStrip(String dni, value) {
+    def name = dni.split("-")[-1]
+    log.debug "childSetThemeRGBStrip($dni), name = ${name}, themeRGBStrip = ${value}"
+    sendEthernet("${name} ${value}")
+}
+
 void childSetColorRGBW(String dni, value) {
     def name = dni.split("-")[-1]
     log.debug "childSetColorRGBW($dni), name = ${name}, colorRGBW = ${value}"
