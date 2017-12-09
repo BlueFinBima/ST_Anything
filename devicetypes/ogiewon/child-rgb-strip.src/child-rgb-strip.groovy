@@ -29,9 +29,9 @@ metadata {
 	capability "Light"
 
 	command "generateEvent", ["string", "string"]
-	command "rainbow"
-	command "chase"
-	command "sparkle"
+	command "themebutton1"
+	command "themebutton2"
+	command "themebutton3"
 	command "red"
 	command "green"
 	command "blue"
@@ -54,70 +54,83 @@ metadata {
 				attributeState "off", label:'${name}', action:"switch.on", icon:"st.illuminance.illuminance.dark", backgroundColor:"#ffffff", nextState:"turningOn"
 				attributeState "turningOn", label:'${name}', action:"switch.off", icon:"st.illuminance.illuminance.light", backgroundColor:"#00A0DC", nextState:"turningOff"
 				attributeState "turningOff", label:'${name}', action:"switch.on", icon:"st.illuminance.illuminance.light", backgroundColor:"#ffffff", nextState:"turningOn"
-			}    
-			tileAttribute ("device.level", key: "SLIDER_CONTROL") {
-        			attributeState "speed", action:"switch speed.setSpeed"
-    			}
+			}
+            tileAttribute ("device.thememode", key: "SECONDARY_CONTROL") {
+				attributeState "default", label:'Theme: ${currentValue}'
+				}
 			tileAttribute ("device.level", key: "SLIDER_CONTROL") {
         			attributeState "level", action:"switch level.setLevel"
     			}
 			tileAttribute ("device.color", key: "COLOR_CONTROL") {
 				attributeState "color", action:"color control.setColor"
-			}
-		}
+				}
+            tileAttribute("device.temperature", key: "VALUE_CONTROL") {
+        		attributeState("VALUE_UP", label:'Up', action: "themescrollUp")
+        		attributeState("VALUE_DOWN", label:'Dn', action: "themescrollDown")
+    			}
+
+		}	
  		valueTile("lastUpdated", "device.lastUpdated", inactiveLabel: false, decoration: "flat", width: 6, height: 2) {
     			state "default", label:'Last Updated ${currentValue}', backgroundColor:"#ffffff"
 		}
-		standardTile("rainbow", "device.rainbow", width: 2, height: 2, inactiveLabel: false, canChangeIcon: false) {
-		    state "offrainbow", label:"rainbow", action:"rainbow", icon:"st.illuminance.illuminance.dark", backgroundColor:"#D8D8D8"
-		    state "onrainbow", label:"rainbow", action:"rainbow", icon:"st.illuminance.illuminance.bright", backgroundColor:"#FFF1E0"
+       controlTile("theme", "device.theme", "slider", height: 1,
+             width: 3, label:'Theme', inactiveLabel: false, range:"(1..54)") {
+			 state "theme", action:"switch level.setLevel"
+		} 
+       controlTile("speed", "device.speed", "slider", height: 1,
+             width: 3, label:'Speed', inactiveLabel: false, range:"(1..100)") {
+			 state "speed", action:"switch level.setLevel"
+		} 
+		standardTile("theme1", "device.theme1", width: 2, height: 2, inactiveLabel: false, canChangeIcon: false) {
+		    state "offtheme1", label:"theme", action:"themebutton1", icon:"st.Outdoor.outdoor15", backgroundColor:"#004000"
+		    state "ontheme1", label:"1", action:"themebutton1", icon:"st.Outdoor.outdoor15", backgroundColor:"#00A000"
 		}
-		standardTile("chase", "device.chase", width: 2, height: 2, inactiveLabel: false, canChangeIcon: false) {
-		    state "offchase", label:"chase", action:"chase", icon:"st.illuminance.illuminance.dark", backgroundColor:"#D8D8D8"
-		    state "onchase", label:"chase", action:"chase", icon:"st.illuminance.illuminance.bright", backgroundColor:"#FFFFFB"
+		standardTile("theme2", "device.theme2", width: 2, height: 2, inactiveLabel: false, canChangeIcon: false) {
+		    state "offtheme2", label:"theme", action:"themebutton2", icon:"st.Outdoor.outdoor15", backgroundColor:"#004000"
+		    state "ontheme2", label:"2", action:"themebutton2", icon:"st.Outdoor.outdoor15", backgroundColor:"#00A000"
 		}
-		standardTile("sparkle", "device.sparkle", width: 2, height: 2, inactiveLabel: false, canChangeIcon: false) {
-		    state "offsparkle", label:"sparkle", action:"sparkle", icon:"st.illuminance.illuminance.dark", backgroundColor:"#D8D8D8"
-		    state "onsparkle", label:"sparkle", action:"sparkle", icon:"st.illuminance.illuminance.bright", backgroundColor:"#FFF4E5"
+		standardTile("theme3", "device.theme3", width: 2, height: 2, inactiveLabel: false, canChangeIcon: false) {
+		    state "offtheme3", label:"theme", action:"themebutton3", icon:"st.Outdoor.outdoor15", backgroundColor:"#004000"
+		    state "ontheme3", label:"3", action:"themebutton3", icon:"st.Outdoor.outdoor15", backgroundColor:"#00A000"
 		}
 		standardTile("red", "device.red", width: 2, height: 2, inactiveLabel: false, canChangeIcon: false) {
-		    state "offred", label:"red", action:"red", icon:"st.illuminance.illuminance.dark", backgroundColor:"#D8D8D8"
+		    state "offred", eedlabel:"red", action:"red", icon:"st.illuminance.illuminance.dark", backgroundColor:"#FF0000"
 		    state "onred", label:"red", action:"red", icon:"st.illuminance.illuminance.bright", backgroundColor:"#FF0000"
 		}
 		standardTile("green", "device.green", width: 2, height: 2, inactiveLabel: false, canChangeIcon: false) {
-		    state "offgreen", label:"green", action:"green", icon:"st.illuminance.illuminance.dark", backgroundColor:"#D8D8D8"
+		    state "offgreen", label:"green", action:"green", icon:"st.illuminance.illuminance.dark", backgroundColor:"#00FF00"
 		    state "ongreen", label:"green", action:"green", icon:"st.illuminance.illuminance.bright", backgroundColor:"#00FF00"
 		}
 		standardTile("blue", "device.blue", width: 2, height: 2, inactiveLabel: false, canChangeIcon: false) {
-		    state "offblue", label:"blue", action:"blue", icon:"st.illuminance.illuminance.dark", backgroundColor:"#D8D8D8"
+		    state "offblue", label:"blue", action:"blue", icon:"st.illuminance.illuminance.dark", backgroundColor:"#0000FF"
 		    state "onblue", label:"blue", action:"blue", icon:"st.illuminance.illuminance.bright", backgroundColor:"#0000FF"
 		}
 		standardTile("cyan", "device.cyan", width: 2, height: 2, inactiveLabel: false, canChangeIcon: false) {
-		    state "offcyan", label:"cyan", action:"cyan", icon:"st.illuminance.illuminance.dark", backgroundColor:"#D8D8D8"
+		    state "offcyan", label:"cyan", action:"cyan", icon:"st.illuminance.illuminance.dark", backgroundColor:"#00FFFF"
 		    state "oncyan", label:"cyan", action:"cyan", icon:"st.illuminance.illuminance.bright", backgroundColor:"#00FFFF"
 		}
 		standardTile("magenta", "device.magenta", width: 2, height: 2, inactiveLabel: false, canChangeIcon: false) {
-		    state "offmagenta", label:"magenta", action:"magenta", icon:"st.illuminance.illuminance.dark", backgroundColor:"#D8D8D8"
+		    state "offmagenta", label:"magenta", action:"magenta", icon:"st.illuminance.illuminance.dark", backgroundColor:"#FF00FF"
 		    state "onmagenta", label:"magenta", action:"magenta", icon:"st.illuminance.illuminance.bright", backgroundColor:"#FF00FF"
 		}
 		standardTile("orange", "device.orange", width: 2, height: 2, inactiveLabel: false, canChangeIcon: false) {
-		    state "offorange", label:"orange", action:"orange", icon:"st.illuminance.illuminance.dark", backgroundColor:"#D8D8D8"
+		    state "offorange", label:"orange", action:"orange", icon:"st.illuminance.illuminance.dark", backgroundColor:"#FF6600"
 		    state "onorange", label:"orange", action:"orange", icon:"st.illuminance.illuminance.bright", backgroundColor:"#FF6600"
 		}
 		standardTile("purple", "device.purple", width: 2, height: 2, inactiveLabel: false, canChangeIcon: false) {
-		    state "offpurple", label:"purple", action:"purple", icon:"st.illuminance.illuminance.dark", backgroundColor:"#D8D8D8"
+		    state "offpurple", label:"purple", action:"purple", icon:"st.illuminance.illuminance.dark", backgroundColor:"#BF00FF"
 		    state "onpurple", label:"purple", action:"purple", icon:"st.illuminance.illuminance.bright", backgroundColor:"#BF00FF"
 		}
 		standardTile("yellow", "device.yellow", width: 2, height: 2, inactiveLabel: false, canChangeIcon: false) {
-		    state "offyellow", label:"yellow", action:"yellow", icon:"st.illuminance.illuminance.dark", backgroundColor:"#D8D8D8"
+		    state "offyellow", label:"yellow", action:"yellow", icon:"st.illuminance.illuminance.dark", backgroundColor:"#FFFF00"
 		    state "onyellow", label:"yellow", action:"yellow", icon:"st.illuminance.illuminance.bright", backgroundColor:"#FFFF00"
 		}
 		standardTile("white", "device.white", width: 2, height: 2, inactiveLabel: false, canChangeIcon: false) {
-		    state "offwhite", label:"White", action:"white", icon:"st.illuminance.illuminance.dark", backgroundColor:"#D8D8D8"
+		    state "offwhite", label:"White", action:"white", icon:"st.illuminance.illuminance.dark", backgroundColor:"#FFFFFF"
 		    state "onwhite", label:"White", action:"white", icon:"st.illuminance.illuminance.bright", backgroundColor:"#FFFFFF"
 		}
 		main(["switch"])
-		details(["switch", "level", "speed", "color", "rainbow","chase","sparkle","red","green","blue","white","cyan",
+		details(["switch", "theme", "speed", "theme1","theme2","theme3","red","green","blue","white","cyan",
 			 "magenta","orange","purple","yellow","lastUpdated"])
 	}
 }
@@ -136,6 +149,7 @@ void on() {
 
 void off() {
     toggleTiles("off")
+    toggleThemeTiles("off")
     sendEvent(name: "switch", value: "off")
     //log.debug("Off pressed.  Update parent device.")
     parent.childOff(device.deviceNetworkId)
@@ -168,11 +182,13 @@ def setLevel(value) {
 	adjustColor(lastColor)
     }
 }
-def setSpeed(value) {
-    def speed = Math.min(value as Integer, 10)
-    // log.debug("Speed value: $speed")
-    sendEvent(name: "speed", value: speed)
+def setRate(value) {
+    def rate = Math.min(value as Integer, 100)
+    log.debug("Level rate value in percentage: $rate")
+     sendEvent(name: "rate", value: rate)
+	
 }
+
 def adjustColor(colorInHEX) {
     // Convert the hex color, apply the level after making sure its valid, then send to parent
     //log.debug("colorInHEX passed in: $colorInHEX")
@@ -213,7 +229,10 @@ def doColorButton(colorName) {
     sendEvent(name: "color", value: colorButtonHEX)
     adjustColor(colorButtonHEX)
 }
-
+def doThemeMode(parm) {
+    //log.debug "thememode: "   
+    sendEvent(name: "thememode", value: parm)
+}
 def getColorData(colorName) {
     //log.debug "getColorData: ${colorName}"
     def colorRGB = colorNameToRgb(colorName)
@@ -231,7 +250,7 @@ private hex(value, width=2) {
 }
 
 def hexToRgb(colorHex) {
-    //log.debug("passed in colorHex: $colorHex")
+    //log.debug "passed in colorHex: $colorHex" 
     def rrInt = Integer.parseInt(colorHex.substring(1,3),16)
     def ggInt = Integer.parseInt(colorHex.substring(3,5),16)
     def bbInt = Integer.parseInt(colorHex.substring(5,7),16)
@@ -292,10 +311,6 @@ def rgbToHSL(rgb) {
 
 def colorNameToRgb(color) {
     final colors = [
-	[name:"Rainbow",	r: 255, g: 241, b: 224	],
-	[name:"Chase", 	        r: 255, g: 255, b: 251	],
-	[name:"sparkle", 	r: 255, g: 244, b: 229	],
-
 	[name:"Red", 		r: 255, g: 0,	b: 0	],
 	[name:"Green", 		r: 0, 	g: 255,	b: 0	],
 	[name:"Blue", 		r: 0, 	g: 0,	b: 255	],
@@ -316,7 +331,7 @@ def colorNameToRgb(color) {
 def toggleTiles(color) {
     state.colorTiles = []
     if ( !state.colorTiles ) {
-    	state.colorTiles = ["rainbow","chase","sparkle","red","green","blue","cyan","magenta",
+    	state.colorTiles = ["red","green","blue","cyan","magenta",
 			    "orange","purple","yellow","white"]
     }
 
@@ -326,23 +341,65 @@ def toggleTiles(color) {
     	if ( it == color ) {
             log.debug "Turning ${it} on"
             cmds << sendEvent(name: it, value: "on${it}", displayed: True, descriptionText: "${device.displayName} ${color} is 'ON'", isStateChange: true)
+            doThemeMode(it)
         } else {
             //log.debug "Turning ${it} off"
             cmds << sendEvent(name: it, value: "off${it}", displayed: false)
       }
     })
 }
+def toggleThemeTiles(themenumber) {
+    //log.debug("toggleThemeTiles: ${themenumber}")
+    state.themeTiles = []
+    if ( !state.themeTiles ) {
+    	state.themeTiles = ["theme1","theme2","theme3"]
+    }
 
-// rows of buttons
-def rainbow() { doColorButton("Rainbow") }
-def chase()  { doColorButton("Chase") }
-def sparkle() { doColorButton("Sparkle") }
+    def cmds = []
 
-def red() 	{ doColorButton("Red") }
-def green() 	{ doColorButton("Green") }
-def blue() 	{ doColorButton("Blue") }
+    state.themeTiles.each({
+    	if ( it == themenumber ) {
+            log.debug ("Turning ${it} on")
+            cmds << sendEvent(name: it, value: "on${it}", displayed: True, descriptionText: "${device.displayName} ${themenumber} is 'ON'", isStateChange: true)
+            doThemeMode(it)
+        } else {
+            //log.debug ("Turning ${it} off")
+            cmds << sendEvent(name: it, value: "off${it}", displayed: false)
+      }
+    })
+}
 
-def cyan() 	{ doColorButton("Cyan") }
+// rows of controls 
+def themescrollUp() 	{   log.debug( "themescrollUp() entry")
+							sendEvent(name: "thememode", value: 'Up')
+							sendEvent(name: device.temperature, value: 99) 
+                        }
+def themescrollDown() 	{   log.debug ("themescrollDown() entry") 
+							sendEvent(name: "thememode", value: 'Down')
+							sendEvent(name: device.temperature, value: -1) 
+                        }
+def theme() {  log.debug( "theme() entry")}
+def speed() {  log.debug( "speed() entry")}
+def thememode() {   doThemeMode("Chase") }
+def themebutton(buttonnumber)   {
+	//log.debug("Setting Theme: ${buttonnumber}")
+	toggleThemeTiles("theme${buttonnumber}")
+    if (buttonnumber == 3) {
+		parent.childSetThemeRGBStrip(device.deviceNetworkId, "T:${44} S:5000")
+    } else {
+		parent.childSetThemeRGBStrip(device.deviceNetworkId, "T:${buttonnumber} S:5000")
+    }
+}
+def themebutton1()   {themebutton(1)}
+def themebutton2()   {themebutton(2)}
+def themebutton3()   {themebutton(3)}
+
+// rows of buttons actions
+def red() 	    { doColorButton("Red") }
+def green()     { doColorButton("Green") }
+def blue() 	    { doColorButton("Blue") }
+
+def cyan() 	    { doColorButton("Cyan") }
 def magenta()	{ doColorButton("Magenta") }
 def orange() 	{ doColorButton("Orange") }
 
