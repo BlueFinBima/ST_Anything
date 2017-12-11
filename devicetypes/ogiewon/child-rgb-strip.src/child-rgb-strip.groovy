@@ -43,6 +43,11 @@ metadata {
 	command "white"
 	}
 
+  // Preferences
+	preferences {
+		input "numLeds", "number", title: "Number of LEDs", description: "Number of LEDs, 4 to n", required: true, displayDuringSetup: true
+	}
+
 	simulator {
 		// TODO: define status and reply messages here
 	}
@@ -64,21 +69,19 @@ metadata {
 			tileAttribute ("device.color", key: "COLOR_CONTROL") {
 				attributeState "color", action:"color control.setColor"
 				}
-            tileAttribute("device.temperature", key: "VALUE_CONTROL") {
-        		attributeState("VALUE_UP", label:'Up', action: "themescrollUp")
-        		attributeState("VALUE_DOWN", label:'Dn', action: "themescrollDown")
-    			}
-
 		}	
- 		valueTile("lastUpdated", "device.lastUpdated", inactiveLabel: false, decoration: "flat", width: 6, height: 2) {
+ 		valueTile("lastUpdated", "device.lastUpdated", inactiveLabel: false, decoration: "flat", width: 5, height: 2) {
     			state "default", label:'Last Updated ${currentValue}', backgroundColor:"#ffffff"
 		}
-       controlTile("theme", "device.theme", "slider", height: 1,
-             width: 3, label:'Theme', inactiveLabel: false, range:"(1..54)") {
+        	valueTile("numberOfLeds", "device.numberOfLeds", inactiveLabel: false, width: 1, height: 2) {
+			state "numberOfLeds", label:' LED\n#\n${currentValue}', unit:""
+		}
+        	controlTile("theme", "device.theme", "slider", height: 1,
+			width: 3, label:'Theme', inactiveLabel: false, range:"(1..54)") {
 			 state "theme", action:"switch level.setLevel"
 		} 
-       controlTile("speed", "device.speed", "slider", height: 1,
-             width: 3, label:'Speed', inactiveLabel: false, range:"(1..100)") {
+        	controlTile("speed", "device.speed", "slider", height: 1,
+		     width: 3, label:'Speed', inactiveLabel: false, range:"(1..100)") {
 			 state "speed", action:"switch level.setLevel"
 		} 
 		standardTile("theme1", "device.theme1", width: 2, height: 2, inactiveLabel: false, canChangeIcon: false) {
@@ -131,7 +134,7 @@ metadata {
 		}
 		main(["switch"])
 		details(["switch", "theme", "speed", "theme1","theme2","theme3","red","green","blue","white","cyan",
-			 "magenta","orange","purple","yellow","lastUpdated"])
+			 "magenta","orange","purple","yellow","lastUpdated","numberOfLeds"])
 	}
 }
 
@@ -378,31 +381,48 @@ def themescrollDown() 	{   log.debug ("themescrollDown() entry")
 							sendEvent(name: "thememode", value: 'Down')
 							sendEvent(name: device.temperature, value: -1) 
                         }
-def theme() {  log.debug( "theme() entry")}
-def speed() {  log.debug( "speed() entry")}
-def thememode() {   doThemeMode("Chase") }
+def theme() 	{  log.debug( "theme() entry")}
+def speed() 	{  log.debug( "speed() entry")}
+def thememode() {  doThemeMode("Chase") }
 def themebutton(buttonnumber)   {
 	//log.debug("Setting Theme: ${buttonnumber}")
 	toggleThemeTiles("theme${buttonnumber}")
-    if (buttonnumber == 3) {
+	if (buttonnumber == 3) {
 		parent.childSetThemeRGBStrip(device.deviceNetworkId, "T:${44} S:5000")
-    } else {
+	} else {
 		parent.childSetThemeRGBStrip(device.deviceNetworkId, "T:${buttonnumber} S:5000")
-    }
+	}
 }
 def themebutton1()   {themebutton(1)}
 def themebutton2()   {themebutton(2)}
 def themebutton3()   {themebutton(3)}
 
 // rows of buttons actions
-def red() 	    { doColorButton("Red") }
+def red() 	{ doColorButton("Red") }
 def green()     { doColorButton("Green") }
-def blue() 	    { doColorButton("Blue") }
+def blue() 	{ doColorButton("Blue") }
 
-def cyan() 	    { doColorButton("Cyan") }
+def cyan() 	{ doColorButton("Cyan") }
 def magenta()	{ doColorButton("Magenta") }
 def orange() 	{ doColorButton("Orange") }
 
 def purple()	{ doColorButton("Purple") }
 def yellow() 	{ doColorButton("Yellow") }
 def white() 	{ doColorButton("White") }
+
+def initialize() {
+    log.debug "Executing 'initialize()'"
+    sendEvent(name: "numberOfLeds", value: numLeds)
+    parent.childSetThemeRGBStrip(device.deviceNetworkId, "L:${numLeds}")
+}
+def updated() {
+	if (!state.updatedLastRanAt || now() >= state.updatedLastRanAt + 5000) {
+		state.updatedLastRanAt = now()
+		log.debug "Executing 'updated()'"
+		sendEvent(name: "numberOfLeds", value: numLeds)
+        	parent.childSetThemeRGBStrip(device.deviceNetworkId, "L:${numLeds}")
+	}
+	else {
+//		log.trace "updated(): Ran within last 5 seconds so aborting."
+	}
+}
