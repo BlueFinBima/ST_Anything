@@ -277,6 +277,11 @@ void childSetThemeRGBStrip(String dni, value) {
     log.debug "childSetThemeRGBStrip($dni), name = ${name}, themeRGBStrip = ${value}"
     sendEthernet("${name} ${value}")
 }
+void childSetThemews281xStrip(String dni, value) {
+    def name = dni.split("-")[-1]
+    log.debug "childSetThemews281xStrip($dni), name = ${name}, themews281xStrip = ${value}"
+    sendEthernet("${name} ${value}")
+}
 
 void childSetColorRGBW(String dni, value) {
     def name = dni.split("-")[-1]
@@ -370,8 +375,11 @@ private void createChildDevice(String deviceName, String deviceNumber) {
          		case "rgbSwitch": 
                 		deviceHandlerName = "Child RGB Switch" 
                 	break
-         		case "rgbStrip": 
-                		deviceHandlerName = "Child RGB Strip" 
+         		case "rgbStrip":    // only needed temporarily
+                		deviceHandlerName = "Child WS281x Strip" 
+                	break
+         		case "ws281xStrip":
+                		deviceHandlerName = "Child WS281x Strip" 
                 	break
          		case "generic": 
                 		deviceHandlerName = "Child Generic Sensor" 
