@@ -87,11 +87,11 @@ metadata {	definition (name: "Child WS281x Strip", namespace: "ogiewon", author:
 			state "numberOfLeds", label:' LED\n#\n${currentValue}', unit:""
 		}
         controlTile("theme", "device.theme", "slider", height: 2,
-			width: 2, label:'Theme', inactiveLabel: true, range:"(1..56)") {
+			width: 2, label:'Theme', inactiveLabel: true, range:"(0..56)") {
 			state "theme", action:"themeadj"
 		} 
         controlTile("speed", "device.speed", "slider", height: 2,
-		    width: 2, label:'Speed', inactiveLabel: true, range:"(0..100)") {
+		    width: 2, label:'Speed', inactiveLabel: true, range:"(0..5000)") {
 			state "speed", action:"speedadj"
 		} 
 		standardTile("theme1", "device.theme1", width: 2, height: 2, inactiveLabel: false, canChangeIcon: false) {
@@ -152,14 +152,14 @@ void on() {
     sendEvent(name: "switch", value: "on")
     def lastColor = device.latestValue("color")
     log.debug("On pressed.  Sending last known color value of $lastColor or if null command to white.")
-    parent.childSetThemeRGBStrip(device.deviceNetworkId, "L:${numLeds}")
+    parent.childSetThemews281xStrip(device.deviceNetworkId, "L:${numLeds}")
     parent.childOn(device.deviceNetworkId)
     if ( lastColor == Null ) {  // For initial run
     	white() 
     } else {
     	adjustColor(lastColor)
     }
-    parent.childSetThemeRGBStrip(device.deviceNetworkId, "T:${themeButNum0} S:${themeButSpd0}")
+    parent.childSetThemews281xStrip(device.deviceNetworkId, "T:${themeButNum0} S:${themeButSpd0}")
 }
 
 void off() {
@@ -381,31 +381,30 @@ def toggleThemeTiles(themenumber) {
 // rows of controls 
 def themeadj(iVal) 	{  //log.debug( "themeadj() entry ${iVal}")
 					   // the WS2812FX modes are numbered 0 - 55 so we need to adjust the value from the slider.  Groovy arrays are numbered from zero.
-					   sendEvent(name: "theme", value: iVal-1)
-                       doTitle(iVal-1)
-                       parent.childSetThemeRGBStrip(device.deviceNetworkId, "T:${iVal-1} S:${device.currentValue("speed")}")
+					   sendEvent(name: "theme", value: iVal)
+                       doTitle(iVal)
+                       parent.childSetThemews281xStrip(device.deviceNetworkId, "T:${iVal} S:${device.currentValue("speed")}")
                     }
 def speedadj(iVal) 	{  //log.debug( "speedadj() entry ${iVal}")
 					   sendEvent(name: "speed", value: iVal)												
-                       parent.childSetThemeRGBStrip(device.deviceNetworkId, "T:${device.currentValue("theme")} S:${iVal*30}")
+                       parent.childSetThemews281xStrip(device.deviceNetworkId, "T:${device.currentValue("theme")} S:${iVal}")
 					}
-//def thememode() {  doThemeMode("Chase") }
 def themebutton(buttonnumber)   {
 					//log.debug("Setting Theme: ${buttonnumber}")
 					toggleThemeTiles("theme${buttonnumber}")
 					 }
 def themebutton1()   {
 				      //log.debug( "themebutton1() entry ${themebutton1}")
-               		parent.childSetThemeRGBStrip(device.deviceNetworkId, "T:${themeButNum1} S:${themeButSpd1}")
-                    //doTitle(${themeButNum1})
+               		parent.childSetThemews281xStrip(device.deviceNetworkId, "T:${themeButNum1} S:${themeButSpd1}")
+                    doTitle(themeButNum1)
 					themebutton(1) }
 def themebutton2()   {		
-					parent.childSetThemeRGBStrip(device.deviceNetworkId, "T:${themeButNum2} S:${themeButSpd2}")
-                    //doTitle(${themeButNum2})
+					parent.childSetThemews281xStrip(device.deviceNetworkId, "T:${themeButNum2} S:${themeButSpd2}")
+                    doTitle(themeButNum2)
 					themebutton(2) }
 def themebutton3()   {
-					parent.childSetThemeRGBStrip(device.deviceNetworkId, "T:${themeButNum3} S:${themeButSpd3}")
-                    //doTitle(${themeButNum3})
+					parent.childSetThemews281xStrip(device.deviceNetworkId, "T:${themeButNum3} S:${themeButSpd3}")
+                    doTitle(themeButNum3)
 					themebutton(3) }
 
 // rows of buttons actions
@@ -424,14 +423,14 @@ def white() 	{ doColorButton("White") }
 def initialize() {
     log.debug "Executing 'initialize()'"
     sendEvent(name: "numberOfLeds", value: numLeds)
-    parent.childSetThemeRGBStrip(device.deviceNetworkId, "L:${numLeds}")
+    parent.childSetThemews281xStrip(device.deviceNetworkId, "L:${numLeds}")
 }
 def updated() {
 	if (!state.updatedLastRanAt || now() >= state.updatedLastRanAt + 5000) {
 		state.updatedLastRanAt = now()
 		log.debug "Executing 'updated()'"
 		sendEvent(name: "numberOfLeds", value: numLeds)
-        parent.childSetThemeRGBStrip(device.deviceNetworkId, "L:${numLeds}")
+        parent.childSetThemews281xStrip(device.deviceNetworkId, "L:${numLeds}")
 	}
 	else {
 //		log.trace "updated(): Ran within last 5 seconds so aborting."
