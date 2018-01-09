@@ -58,25 +58,26 @@
 //#define D7 13
 //#define D8 15  //must not be pulled high during power on/reset
 
-#define NUM_LEDS    44
+//define a minimum number of LEDs
+#define NUM_LEDS    4
 
 //******************************************************************************************
 //Define which Arduino Pins will be used for each device
 //******************************************************************************************
-#define PIN_WS2812             2  // WS2812 control pin D4
+#define PIN_WS2812             2  // WS2812 control GPIO2 which is the D4 pin on the D1 Mini
 //******************************************************************************************
 //ESP8266 WiFi Information
 //******************************************************************************************
-String str_ssid     = "yourSSIDhere";                           //  <---You must edit this line!
-String str_password = "yourWiFiPasswordhere";                   //  <---You must edit this line!
-IPAddress ip(192, 168, 1, 234);       //Device IP Address       //  <---You must edit this line!
-IPAddress gateway(192, 168, 1, 1);    //Router gateway          //  <---You must edit this line!
+String str_ssid     = "***REMOVED***";                                    //  <---You must edit this line!
+String str_password = "***REMOVED***";                        //  <---You must edit this line!
+IPAddress ip(10, 1, 1, 209);       //Device IP Address          //  <---You must edit this line!
+IPAddress gateway(10, 1, 1, 1);    //Router gateway             //  <---You must edit this line!
 IPAddress subnet(255, 255, 255, 0);   //LAN subnet mask         //  <---You must edit this line!
-IPAddress dnsserver(192, 168, 1, 1);  //DNS server              //  <---You must edit this line!
+IPAddress dnsserver(10, 1, 1, 1);  //DNS server                 //  <---You must edit this line!
 const unsigned int serverPort = 8090; // port to run the http server on
 
 // Smartthings Hub Information
-IPAddress hubIp(192, 168, 1, 149);    // smartthings hub ip     //  <---You must edit this line!
+IPAddress hubIp(10, 1, 1, 186);       // smartthings hub ip     //  <---You must edit this line!
 const unsigned int hubPort = 39500;   // smartthings hub port
 
 //******************************************************************************************
@@ -101,6 +102,8 @@ void callback(const String &msg)
 
 void setup()
 {
+
+
   //******************************************************************************************
   //Declare each Device that is attached to the Arduino
   //  Notes: - For each device, there is typically a corresponding "tile" defined in your 
@@ -125,7 +128,7 @@ void setup()
   //Special sensors/executors (uses portions of both polling and executor classes)
   
   //Executors
-  static st::EX_WS2812_Dim         executor1(F("rgbSwitch1"), PIN_WS2812, NUM_LEDS,  false);
+  static st::EX_WS2812_Dim         executor1(F("ws281xStrip1"), PIN_WS2812, NUM_LEDS,  false);
   
   //*****************************************************************************
   //  Configure debug print output from each main class 
@@ -147,6 +150,8 @@ void setup()
   
   //Create the SmartThings ESP8266WiFi Communications Object
     //STATIC IP Assignment - Recommended
+    digitalWrite(BUILTIN_LED, LOW);  // sets the LED to the button's value
+
     st::Everything::SmartThing = new st::SmartThingsESP8266WiFi(str_ssid, str_password, ip, gateway, subnet, dnsserver, serverPort, hubIp, hubPort, st::receiveSmartString);
  
     //DHCP IP Assigment - Must set your router's DHCP server to provice a static IP address for this device's MAC address
@@ -168,6 +173,7 @@ void setup()
   //Initialize each of the devices which were added to the Everything Class
   //*****************************************************************************
   st::Everything::initDevices(); 
+  digitalWrite(BUILTIN_LED, HIGH);  // sets the LED to the button's value
 }
 
 //******************************************************************************************
@@ -181,4 +187,3 @@ void loop()
   st::Everything::run();
 
 }
-
