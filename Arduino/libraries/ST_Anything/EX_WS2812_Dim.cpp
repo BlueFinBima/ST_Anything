@@ -22,15 +22,16 @@
 //    2017-10-08  Allan (vseven) Modified original code from EX_WS2812_Dim to be used for RGB lighting
 //
 //******************************************************************************************
+
 #include "EX_WS2812_Dim.h"
 
 #include "Constants.h"
 #include "Everything.h"
 
 
-
 namespace st
 {
+
 //private
 	void EX_WS2812_Dim::writeRGBToPin()
 	{
@@ -38,62 +39,39 @@ namespace st
 		int subStringG;
 		int subStringB;
         long number;
-
-		if (m_bCurrentState == HIGH)
+        if (m_bCurrentState == HIGH)
 		{
-		// Our status is on so get the RGB value from the hex
-		String hexstring = m_sCurrentHEX;
-		number = (long) strtol( &hexstring[1], NULL, 16);
-      	// Split them up into r, g, b values
-      	subStringR = number >> 16;
-      	subStringG = number >> 8 & 0xFF;
-      	subStringB = number & 0xFF;
-	}
-	else
-	{
-        m_bCurrentMode = 0x00;
-		// Status is off so turn off LED
-		subStringR = 00;
-      	subStringG = 00;
-      	subStringB = 00;
-	}
+    		// Our status is on so get the RGB value from the hex
+    		String hexstring = m_sCurrentHEX;
+    		number = (long) strtol( &hexstring[1], NULL, 16);
+          	// Split them up into r, g, b values
+          	subStringR = number >> 16;
+          	subStringG = number >> 8 & 0xFF;
+          	subStringB = number & 0xFF;
+
+            m_bCurrentMode = 0x00;
+
+            leds.setColor(subStringR, subStringG, subStringB);
+            leds.start();
+            m_bCurrentMode = m_bLastMode;
+    	}
+    	else
+    	{
+            // Status is off so turn off LED
+            m_bCurrentMode = 0x00;
+            m_bCurrentMode = m_bLastMode;
+    		subStringR = 00;
+          	subStringG = 00;
+          	subStringB = 00;
+            leds.setColor(subStringR, subStringG, subStringB);
+            leds.stop();
+    	}
 
 
 		if (st::Executor::debug) {
-			Serial.print(F("subString R:G:B = "));
+			Serial.print("subString R:G:B = ");
 			Serial.println(String(subStringR) + ":" + String(subStringG) + ":" + String(subStringB));
 		}
-        switch(number) {
-        case (long) 0xafa69a:
-            m_bCurrentMode = 0x01;    // this is to allow the mainline routine to know that an animation is running on the strip.
-            break;
-        case (long) 0xafafad:
-            m_bCurrentMode = 0x02;    // this is to allow the mainline routine to know that an animation is running on the strip.
-            break;
-        case (long) 0xafa89e:
-            m_bCurrentMode = 0x03;    // this is to allow the mainline routine to know that an animation is running on the strip.
-            break;
-        default:
-          {
-              m_bCurrentMode = 0x00;
-              byte brightness = 48;       // default brightness: 48
-              uint32_t r, g, b;
-              uint32_t c;
-              for(uint16_t i=0;i<m_nNumLEDs;i++) {
-                r = (pixels[i]>>16)&0xFF;
-                g = (pixels[i]>>8)&0xFF;
-                b = (pixels[i])&0xFF;
-                r = r*brightness/255;
-                g = g*brightness/255;
-                b = b*brightness/255;
-                c = (subStringR<<16) + (subStringG<<8) + subStringB;
-                leds.setPixelColor(i, c);
-              }
-              leds.show();
-            }
-            break;
-         }
-
 	}
 
 //public
@@ -101,110 +79,98 @@ namespace st
 	EX_WS2812_Dim::EX_WS2812_Dim(const __FlashStringHelper *name, byte pinWS2812, uint16_t sizeWS2812, byte channelR, byte channelG, byte channelB):
 		Executor(name)
 	{
-        pixels = (uint32_t *) malloc(sizeWS2812*sizeof(uint32_t));  // pixel buffer. this buffer allows you to set arbitrary
+        //pixels = (uint32_t *) malloc(sizeWS2812*sizeof(uint32_t));  // pixel buffer. this buffer allows you to set arbitrary
                                                                     // brightness without destroying the original color values
+        leds.init();
 		setWS2812Pin(pinWS2812, sizeWS2812);
 	}
 
 	//destructor
 	EX_WS2812_Dim::~EX_WS2812_Dim()
 	{
-        free(pixels);
+        //free(pixels);
         m_bCurrentMode = 0x00;
 	}
 	
 	void EX_WS2812_Dim::init()
 	{
-		Everything::sendSmartString(getName() + " " + (m_bCurrentState == HIGH ? F("on") : F("off")));
+		Everything::sendSmartString(getName() + " " + (m_bCurrentState == HIGH ? "on" : "off"));
 	}
 
 	void EX_WS2812_Dim::beSmart(const String &str)
 	{
 		String s=str.substring(str.indexOf(' ')+1);
 		if (st::Executor::debug) {
-			Serial.print(F("EX_WS2812_Dim::beSmart s = "));
+			Serial.print("EX_WS2812_Dim::beSmart s = ");
 			Serial.println(s);
 		}
-		if(s==F("on"))
+        // this is either going to be an "on" "off" "#ffffff" colour or a theme/speed command in the form "T:nnn S:nnnn"
+ 		if(s=="on")
 		{
 			m_bCurrentState=HIGH;
 		}
-		else if(s==F("off"))
+		else if(s=="off")
 		{
 			m_bCurrentState=LOW;
 		}
+        else if(s[0]=='T')
+        {
+            // We have detected a Theme coming in so parse it into a theme and speed
+            int intThemeNumber = s.substring(s.indexOf(':')+1,s.indexOf(' ')).toInt();
+            int intSpeed = s.substring(s.indexOf('S')+2).toInt();
+            if (st::Executor::debug) {
+                Serial.print("Theme = ");
+                Serial.print(intThemeNumber);
+                Serial.print("  Speed = ");
+                Serial.println(intSpeed);
+                }
+            if (m_bCurrentState==HIGH) {
+                leds.stop();
+                leds.setSpeed(intSpeed);
+                leds.setMode(intThemeNumber);
+            }
+        }
+        else if(s[0]=='L')
+        {
+            // We have detected a Length of strip arriving so we need to perform a setLength
+            int intLedNumber = s.substring(s.indexOf(':')+1).toInt();
+            if (st::Executor::debug) {
+                Serial.print("Strip Length = ");
+                Serial.println(intLedNumber);
+                }
+                m_nNumLEDs = intLedNumber;
+                leds.setLength(m_nNumLEDs);
+                leds.init();
+         }
 		else //must be a set color command
 		{
 			s.trim();
 			m_sCurrentHEX = s;
 		}
-
 		writeRGBToPin();
 
-		Everything::sendSmartString(getName() + " " + (m_bCurrentState == HIGH?F("on"):F("off")));
+		Everything::sendSmartString(getName() + " " + (m_bCurrentState == HIGH?"on":"off"));
 	}
 	
 	void EX_WS2812_Dim::refresh()
 	{
-            Everything::sendSmartString(getName() + " " + (m_bCurrentState == HIGH?F("on"):F("off")));
+            Everything::sendSmartString(getName() + " " + (m_bCurrentState == HIGH?"on":"off"));
   	}
 	
 	void EX_WS2812_Dim::animate()
 	{
-        switch(m_bCurrentMode) {
-            case 0x01:
-                    demoRainbow();
-                break;
-            case 0x02:
-                    demoRainbow();
-                break;
-            case 0x03:
-                    demoRainbow();
-                break;
-            default:
-                break;
-        }
+      leds.service();
 	}
 	void EX_WS2812_Dim::setWS2812Pin(byte pin, uint16_t numLEDs)
 	{
         m_bCurrentMode = 0x00;
 		m_nPinWS2812 = pin;
 		m_nNumLEDs = numLEDs;
+
         pinMode(m_nPinWS2812, OUTPUT);
-        //leds = new Adafruit_NeoPixel( m_nNumLEDs, m_nPinWS2812, NEO_GRB + NEO_KHZ800);
-
-           // Initialize LEDs
-          leds.begin();
-          leds.show();
-
+        //leds.setMode(FX_MODE_STATIC);
+        //leds.setColor(48, 48, 48);
+        leds.setLength(m_nNumLEDs);
+        leds.init();
 	}
-
-    uint32_t EX_WS2812_Dim::wheel(byte WheelPos) {
-      WheelPos = 255 - WheelPos;
-      if(WheelPos < 85) {
-        return leds.Color(255 - WheelPos * 3, 0, WheelPos * 3);
-      }
-      if(WheelPos < 170) {
-        WheelPos -= 85;
-        return leds.Color(0, WheelPos * 3, 255 - WheelPos * 3);
-      }
-      WheelPos -= 170;
-      return leds.Color(WheelPos * 3, 255 - WheelPos * 3, 0);
-    }
-
-    /* ----------------
-     *   Rainbox Demo
-     * ---------------- */
-    void EX_WS2812_Dim::demoRainbow() 
-    {
-      static byte idx = 0;
-      for(uint16_t i=0;i<m_nNumLEDs;i++) {
-        pixels[i] = wheel((i+idx)&0xFF);
-        leds.setPixelColor(i, pixels[i]);
-      }
-      leds.show();
-      delay(10);
-      idx++;
-    }
-
 }

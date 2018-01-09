@@ -23,12 +23,12 @@
 //    2017-10-06  Allan (vseven) Modified original code from EX_Switch_Dim to be used for RGB lighting
 //
 //******************************************************************************************
+
 #ifndef ST_EX_WS2812_Dim
 #define ST_EX_WS2812_Dim
 
 #include "Executor.h"
-#include <Adafruit_NeoPixel.h>
-
+#include <WS2812FX.h>
 namespace st
 {
 	class EX_WS2812_Dim: public Executor
@@ -39,11 +39,12 @@ namespace st
 			uint16_t m_nNumLEDs;    //number of LEDs in the WS2812 strip
 			String m_sCurrentHEX;	//HEX value of color currently set
             byte m_bCurrentMode;    //the display mode running on the strip    
-            uint32_t * pixels;      // This is the pixel buffer for the WS2812 write
+            byte m_bLastMode;       //the display mode previously running on the strip    
 			void writeRGBToPin();	// function to write the buffer to the WS2812
-            Adafruit_NeoPixel leds = Adafruit_NeoPixel(44, 2, NEO_GRB + NEO_KHZ800); // class to process the WS2812 string
-            uint32_t wheel(byte);   // helper function for the colour wheel
-		public:
+            WS2812FX leds = WS2812FX(4, 2, NEO_GRB + NEO_KHZ800); // class to process the WS2812 string using GPIO2
+            //WS2812FX leds = WS2812FX(4, 2, NEO_RGB + NEO_KHZ800); // class to process the WS2812 string using GPIO2 for Christmas Tree WS2811
+
+  		public:
 			//constructor - called in your sketch's global variable declaration section
 			EX_WS2812_Dim(const __FlashStringHelper *name, byte pinWS2812, uint16_t sizeWS2812, byte channelR = 0, byte channelG = 0, byte channelB = 0);
 			
@@ -71,12 +72,7 @@ namespace st
             virtual byte getMode() const { return m_bCurrentMode; }	   // the display mode active on the strip
 
 			//sets
-			virtual void setWS2812Pin(byte pin,uint16_t numLEDs);	
-            
-            // Demo Routines
-            virtual void demoRainbow();                             // present a rainbow
- 	
-	};
+			virtual void setWS2812Pin(byte pin,uint16_t numLEDs);
+      	};
 }
-
 #endif
