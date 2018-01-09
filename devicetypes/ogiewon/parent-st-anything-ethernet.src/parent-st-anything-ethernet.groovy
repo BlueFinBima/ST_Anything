@@ -24,11 +24,15 @@
  *    2017-07-09  Dan Ogorchock  Added number of defined buttons tile
  *    2017-08-24  Allan (vseven) Change the way values are pushed to child devices to allow a event to be executed allowing future customization
  *    2017-09-19  Neil Larmour   Integrate a new DMX Lighting child device
+ *    2007-09-24  Allan (vseven) Added RGB LED light support with a setColorRGB routine
+ *    2017-10-07  Dan Ogorchock  Cleaned up formatting for readability
+ *    2007-09-24  Allan (vseven) Added RGBW LED strip support with a setColorRGBW routine
+ *
  */
  
 metadata {
 	definition (name: "Parent_ST_Anything_Ethernet", namespace: "ogiewon", author: "Dan Ogorchock") {
-		capability "Configuration"
+        capability "Configuration"
         capability "Refresh"
         capability "Button"
         capability "Holdable Button"
@@ -42,7 +46,7 @@ metadata {
 		input "ip", "text", title: "Arduino IP Address", description: "IP Address in form 192.168.1.226", required: true, displayDuringSetup: true
 		input "port", "text", title: "Arduino Port", description: "port in form of 8090", required: true, displayDuringSetup: true
 		input "mac", "text", title: "Arduino MAC Addr", description: "MAC Address in form of 02A1B2C3D4E5", required: true, displayDuringSetup: true
-		input "numButtons", "number", title: "Number of Buttons", description: "Number of Buttons to be implemented", defaultValue: 0, required: true, displayDuringSetup: true
+		input "numButtons", "number", title: "Number of Buttons", description: "Number of Buttons, 0 to n", required: true, displayDuringSetup: true
 	}
 
 	// Tile Definitions
@@ -263,6 +267,29 @@ void childSetLevel(String dni, value) {
     sendEthernet("${name} ${value}")
 }
 
+void childSetColorRGB(String dni, value) {
+    def name = dni.split("-")[-1]
+    log.debug "childSetColorRGB($dni), name = ${name}, colorRGB = ${value}"
+    sendEthernet("${name} ${value}")
+}
+
+void childSetThemeRGBStrip(String dni, value) {
+    def name = dni.split("-")[-1]
+    log.debug "childSetThemeRGBStrip($dni), name = ${name}, themeRGBStrip = ${value}"
+    sendEthernet("${name} ${value}")
+}
+void childSetThemews281xStrip(String dni, value) {
+    def name = dni.split("-")[-1]
+    log.debug "childSetThemews281xStrip($dni), name = ${name}, themews281xStrip = ${value}"
+    sendEthernet("${name} ${value}")
+}
+
+void childSetColorRGBW(String dni, value) {
+    def name = dni.split("-")[-1]
+    log.debug "childSetColorRGBW($dni), name = ${name}, colorRGBW = ${value}"
+    sendEthernet("${name} ${value}")
+}
+
 void childRelayOn(String dni) {
     def name = dni.split("-")[-1]
     log.debug "childRelayOn($dni), name = ${name}"
@@ -330,67 +357,79 @@ def updateDeviceNetworkID() {
 }
 
 private void createChildDevice(String deviceName, String deviceNumber) {
-    if ( device.deviceNetworkId =~ /^[A-Z0-9]{12}$/)
-    {
+    if ( device.deviceNetworkId =~ /^[A-Z0-9]{12}$/) {
+    
 		log.trace "createChildDevice:  Creating Child Device '${device.displayName} (${deviceName}${deviceNumber})'"
-
-		try 
-        {
+        
+		try {
         	def deviceHandlerName = ""
         	switch (deviceName) {
          		case "contact": 
-                	deviceHandlerName = "Child Contact Sensor" 
+                		deviceHandlerName = "Child Contact Sensor" 
                 	break
          		case "switch": 
-                	deviceHandlerName = "Child Switch" 
+                		deviceHandlerName = "Child Switch" 
                 	break
          		case "dimmerSwitch": 
-                	deviceHandlerName = "Child Dimmer Switch" 
+                		deviceHandlerName = "Child Dimmer Switch" 
+                	break
+         		case "rgbSwitch": 
+                		deviceHandlerName = "Child RGB Switch" 
+                	break
+         		case "rgbStrip":    // only needed temporarily
+                		deviceHandlerName = "Child WS281x Strip" 
+                	break
+         		case "ws281xStrip":
+                		deviceHandlerName = "Child WS281x Strip" 
+                	break
+         		case "generic": 
+                		deviceHandlerName = "Child Generic Sensor" 
+                	break
+         		case "rgbwSwitch": 
+                		deviceHandlerName = "Child RGBW Switch" 
                 	break
          		case "relaySwitch": 
-                	deviceHandlerName = "Child Relay Switch" 
+                		deviceHandlerName = "Child Relay Switch" 
                 	break
-			case "temperature": 
-                	deviceHandlerName = "Child Temperature Sensor" 
+         		case "temperature": 
+                		deviceHandlerName = "Child Temperature Sensor" 
                 	break
          		case "humidity": 
-                	deviceHandlerName = "Child Humidity Sensor" 
+                		deviceHandlerName = "Child Humidity Sensor" 
                 	break
          		case "motion": 
-                	deviceHandlerName = "Child Motion Sensor" 
+                		deviceHandlerName = "Child Motion Sensor" 
                 	break
          		case "water": 
-                	deviceHandlerName = "Child Water Sensor" 
+                		deviceHandlerName = "Child Water Sensor" 
                 	break
          		case "illuminance": 
-                	deviceHandlerName = "Child Illuminance Sensor" 
+                		deviceHandlerName = "Child Illuminance Sensor" 
                 	break
          		case "illuminancergb": 
-                	deviceHandlerName = "Child IlluminanceRGB Sensor" 
+                		deviceHandlerName = "Child IlluminanceRGB Sensor" 
                 	break
-			case "voltage": 
-                	deviceHandlerName = "Child Voltage Sensor" 
+         		case "voltage": 
+                		deviceHandlerName = "Child Voltage Sensor" 
                 	break
-			case "smoke": 
-                	deviceHandlerName = "Child Smoke Detector" 
+         		case "smoke": 
+                		deviceHandlerName = "Child Smoke Detector" 
                 	break    
-			case "carbonMonoxide": 
-                	deviceHandlerName = "Child Carbon Monoxide Detector" 
+         		case "carbonMonoxide": 
+                		deviceHandlerName = "Child Carbon Monoxide Detector" 
                 	break    
          		case "alarm": 
-                	deviceHandlerName = "Child Alarm" 
+                		deviceHandlerName = "Child Alarm" 
                 	break    
          		case "doorControl": 
-                	deviceHandlerName = "Child Door Control" 
+                		deviceHandlerName = "Child Door Control" 
                 	break
 			case "dmxLights":
 			deviceHandlerName = "Child DMX Lights"
-			default: 
-                	log.error "No Child Device Handler case for ${deviceName}"
       		}
             if (deviceHandlerName != "") {
-				addChildDevice(deviceHandlerName, "${device.deviceNetworkId}-${deviceName}${deviceNumber}", null,
-		      		[completedSetup: true, label: "${device.displayName} (${deviceName}${deviceNumber})", 
+         		addChildDevice(deviceHandlerName, "${device.deviceNetworkId}-${deviceName}${deviceNumber}", null,
+         			[completedSetup: true, label: "${device.displayName} (${deviceName}${deviceNumber})", 
                 	isComponent: false, componentName: "${deviceName}${deviceNumber}", componentLabel: "${deviceName} ${deviceNumber}"])
         	}   
     	} catch (e) {

@@ -197,8 +197,10 @@ namespace st
 		}
 		#endif
 		#ifndef DISABLE_ANIMATE		//Added new check to allow user to disable ANIMATE feature - setting is in Constants.h)
+
 	// @@@ Work still to do here @@@
 	// not currently sure how to check to see if there is an animate method for every executor so temporarily only 
+
         // try to call it for the first executor
         if (m_Executors[0]->getMode() > 0){ // only call animate if there is an animation mode set                                        
             m_Executors[0]->animate();      // This is to call the animate() on our WS2812 strip to allow animations to happen.  This needs to happen more frequently than the refresh interval

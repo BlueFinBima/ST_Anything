@@ -58,12 +58,13 @@
 //#define D7 13
 //#define D8 15  //must not be pulled high during power on/reset
 
-#define NUM_LEDS    44
+//define a minimum number of LEDs
+#define NUM_LEDS    4
 
 //******************************************************************************************
 //Define which Arduino Pins will be used for each device
 //******************************************************************************************
-#define PIN_WS2812             2  // WS2812 control pin D4
+#define PIN_WS2812             2  // WS2812 control GPIO2 which is the D4 pin on the D1 Mini
 //******************************************************************************************
 //ESP8266 WiFi Information
 //******************************************************************************************
@@ -101,6 +102,8 @@ void callback(const String &msg)
 
 void setup()
 {
+
+
   //******************************************************************************************
   //Declare each Device that is attached to the Arduino
   //  Notes: - For each device, there is typically a corresponding "tile" defined in your 
@@ -125,7 +128,7 @@ void setup()
   //Special sensors/executors (uses portions of both polling and executor classes)
   
   //Executors
-  static st::EX_WS2812_Dim         executor1(F("rgbSwitch1"), PIN_WS2812, NUM_LEDS,  false);
+  static st::EX_WS2812_Dim         executor1(F("ws281xStrip1"), PIN_WS2812, NUM_LEDS,  false);
   
   //*****************************************************************************
   //  Configure debug print output from each main class 
@@ -147,6 +150,8 @@ void setup()
   
   //Create the SmartThings ESP8266WiFi Communications Object
     //STATIC IP Assignment - Recommended
+    digitalWrite(BUILTIN_LED, LOW);  // sets the LED to the button's value
+
     st::Everything::SmartThing = new st::SmartThingsESP8266WiFi(str_ssid, str_password, ip, gateway, subnet, dnsserver, serverPort, hubIp, hubPort, st::receiveSmartString);
  
     //DHCP IP Assigment - Must set your router's DHCP server to provice a static IP address for this device's MAC address
@@ -168,6 +173,7 @@ void setup()
   //Initialize each of the devices which were added to the Everything Class
   //*****************************************************************************
   st::Everything::initDevices(); 
+  digitalWrite(BUILTIN_LED, HIGH);  // sets the LED to the button's value
 }
 
 //******************************************************************************************
@@ -181,4 +187,3 @@ void loop()
   st::Everything::run();
 
 }
-
