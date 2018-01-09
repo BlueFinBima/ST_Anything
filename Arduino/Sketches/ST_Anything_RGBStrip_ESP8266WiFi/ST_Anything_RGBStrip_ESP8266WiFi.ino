@@ -68,16 +68,16 @@
 //******************************************************************************************
 //ESP8266 WiFi Information
 //******************************************************************************************
-String str_ssid     = "***REMOVED***";                                    //  <---You must edit this line!
-String str_password = "***REMOVED***";                        //  <---You must edit this line!
-IPAddress ip(10, 1, 1, 209);       //Device IP Address          //  <---You must edit this line!
-IPAddress gateway(10, 1, 1, 1);    //Router gateway             //  <---You must edit this line!
+String str_ssid     = "SSID";                                   //  <---You must edit this line!
+String str_password = "A Password";                             //  <---You must edit this line!
+IPAddress ip(1, 1, 1, 1);       //Device IP Address          //  <---You must edit this line!
+IPAddress gateway(1, 1, 1, 1);    //Router gateway             //  <---You must edit this line!
 IPAddress subnet(255, 255, 255, 0);   //LAN subnet mask         //  <---You must edit this line!
-IPAddress dnsserver(10, 1, 1, 1);  //DNS server                 //  <---You must edit this line!
+IPAddress dnsserver(1, 1, 1, 1);  //DNS server                 //  <---You must edit this line!
 const unsigned int serverPort = 8090; // port to run the http server on
 
 // Smartthings Hub Information
-IPAddress hubIp(10, 1, 1, 186);       // smartthings hub ip     //  <---You must edit this line!
+IPAddress hubIp(1, 1, 1, 1);       // smartthings hub ip     //  <---You must edit this line!
 const unsigned int hubPort = 39500;   // smartthings hub port
 
 //******************************************************************************************
